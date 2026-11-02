@@ -3,6 +3,7 @@ package com.alifu.liatinmobil.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -61,6 +62,33 @@ class RideMapScreenTest {
         composeRule.onNodeWithText("Hore! Sudah sampai di Sekolah 🎉").assertIsDisplayed()
         composeRule.onNodeWithTag("play_again_button").performClick()
         assertTrue(playAgainClicked)
+    }
+
+    @Test
+    fun turn_banner_appears_shortly_before_a_turn() {
+        val turnAnnouncedAt = (0..duration step 250).first { simulator.snapshotAt(it).upcomingTurn != null }
+        showRide { RideMapScreen(stateAt(turnAnnouncedAt, isPaused = true), {}, {}, {}, {}) }
+
+        composeRule.onNodeWithTag("turn_banner").assertIsDisplayed()
+        composeRule.onNodeWithText("Belok kanan").assertIsDisplayed()
+    }
+
+    @Test
+    fun turn_banner_is_hidden_when_no_turn_is_close() {
+        showRide { RideMapScreen(stateAt(0, isPaused = true), {}, {}, {}, {}) }
+
+        composeRule.onNodeWithTag("turn_banner").assertDoesNotExist()
+    }
+
+    @Test
+    fun mute_button_switches_the_sound_off_and_on() {
+        showRide { RideMapScreen(stateAt(0, isPaused = true), {}, {}, {}, {}) }
+
+        composeRule.onNodeWithContentDescription("Matikan suara").performClick()
+        composeRule.mainClock.advanceTimeBy(FRAME_STEP_MILLIS)
+        composeRule.onNodeWithContentDescription("Nyalakan suara").assertIsDisplayed().performClick()
+        composeRule.mainClock.advanceTimeBy(FRAME_STEP_MILLIS)
+        composeRule.onNodeWithContentDescription("Matikan suara").assertIsDisplayed()
     }
 
     @Test
