@@ -16,10 +16,13 @@ private val TaillightColor = Color(0xFFE53935)
 private val CarShadow = Color(0x40000000)
 
 /** How far the car lifts (as a fraction of its length) at the top of a hop. */
-private const val HOP_LIFT = 0.14f
+private const val HOP_LIFT = 0.07f
 
 /** How much bigger the car looks at the top of a hop (it is closer to the camera). */
-private const val HOP_GROW = 0.08f
+private const val HOP_GROW = 0.04f
+
+/** How much lighter the shadow gets at the top of a hop. */
+private const val HOP_SHADOW_FADE = 0.2f
 
 /**
  * Draws a top-down car centred on [center], pointing up when [bearingDegrees] is 0.
@@ -37,7 +40,7 @@ internal fun DrawScope.drawTopDownCar(
     val topLeft = Offset(center.x - width / 2, center.y - length / 2)
     rotate(bearingDegrees, pivot = center) {
         val shadowOffset = Offset(length * 0.06f, length * 0.08f)
-        val shadowColor = CarShadow.copy(alpha = CarShadow.alpha * (1f - 0.4f * hop))
+        val shadowColor = CarShadow.copy(alpha = CarShadow.alpha * (1f - HOP_SHADOW_FADE * hop))
         drawRoundRect(shadowColor, topLeft + shadowOffset, Size(width, length), CornerRadius(width * 0.4f))
     }
     val grow = 1f + HOP_GROW * hop
