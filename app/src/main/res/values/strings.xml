@@ -1,3 +1,43 @@
 <resources>
     <string name="app_name">LiatinMobil</string>
+
+    <string name="action_back">Kembali</string>
+    <string name="missing_content_title">Ups, perjalanan ini tidak ditemukan.</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_greeting">Halo, Penjelajah Kecil! 👋</string>
+    <string name="dashboard_question">Mau ke mana hari ini?</string>
+    <string name="dashboard_hint">Pilih salah satu perjalanan di bawah</string>
+    <string name="dashboard_section_title">Pilih Perjalanan</string>
+    <string name="route_from">Dari %1$s</string>
+    <string name="route_to">Ke %1$s</string>
+
+    <!-- Car selection -->
+    <string name="car_selection_title">Pilih Mobil</string>
+    <string name="car_selection_map_description">Peta rute dari %1$s ke %2$s</string>
+    <string name="car_selection_car_section">Mau naik mobil apa?</string>
+    <string name="car_selection_duration_section">Berapa lama perjalanannya?</string>
+    <string name="car_selection_duration_option">%1$d menit</string>
+    <string name="car_selection_book">Pesan Sekarang</string>
+
+    <!-- Ride -->
+    <string name="ride_map_description">Peta dengan mobil yang sedang berjalan</string>
+    <string name="ride_show_route">🗺️ Lihat Rute</string>
+    <string name="ride_follow_car">🚗 Ikuti Mobil</string>
+    <string name="ride_title_searching">Mencari driver terdekat…</string>
+    <string name="ride_title_coming">Driver sedang menuju kamu</string>
+    <string name="ride_title_pickup">Driver sudah sampai! Ayo naik 🚪</string>
+    <string name="ride_title_trip">Menuju %1$s %2$s</string>
+    <string name="ride_title_arrived">Hore! Sudah sampai di %1$s 🎉</string>
+    <string name="ride_subtitle_searching">Sebentar ya…</string>
+    <string name="ride_subtitle_coming">Driver tiba dalam %1$d menit</string>
+    <string name="ride_subtitle_coming_soon">Driver hampir sampai</string>
+    <string name="ride_subtitle_pickup">Jangan lupa pakai sabuk pengaman!</string>
+    <string name="ride_subtitle_trip">Tiba dalam %1$d menit</string>
+    <string name="ride_subtitle_trip_soon">Sebentar lagi sampai</string>
+    <string name="ride_subtitle_red_light">Lampu merah, berhenti sebentar 🚦</string>
+    <string name="ride_subtitle_arrived">Terima kasih sudah naik %1$s</string>
+    <string name="ride_pause">⏸ Jeda</string>
+    <string name="ride_resume">▶ Lanjut</string>
+    <string name="ride_play_again">Main Lagi</string>
 </resources>
