@@ -47,3 +47,15 @@ internal fun easedDriveFraction(elapsed: Long, total: Long, rampMillis: Long): F
     }
     return fraction.toFloat().coerceIn(0f, 1f)
 }
+
+/**
+ * Current speed of a drive relative to cruise speed (0..1), matching the trapezoid
+ * profile of [easedDriveFraction]: ramps up, stays at 1, then ramps down to 0.
+ */
+internal fun easedDriveSpeedRatio(elapsed: Long, total: Long, rampMillis: Long): Float {
+    if (total <= 0) return 0f
+    val t = elapsed.coerceIn(0, total).toFloat()
+    val ramp = minOf(rampMillis.toFloat(), total / 2f)
+    if (ramp == 0f) return 1f
+    return minOf(t / ramp, (total - t) / ramp, 1f).coerceIn(0f, 1f)
+}
