@@ -4,6 +4,13 @@ Aplikasi Android sederhana untuk anak-anak yang suka **melihat mobil bergerak di
 
 > Seluruh aplikasi berjalan **tanpa internet**. Tidak ada iklan, akun, pembayaran, atau data yang dikirim ke mana pun.
 
+## 📱 Preview
+
+| Dashboard | Pilih Mobil | Animasi di Peta |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/dashboard.png" width="240" alt="Dashboard dengan 10 kartu perjalanan" /> | <img src="docs/screenshots/car_selection.png" width="240" alt="Halaman pilih mobil dengan pratinjau rute" /> | <img src="docs/screenshots/ride.png" width="240" alt="Taksi kuning berjalan di peta menuju sekolah" /> |
+| Pilih salah satu dari 10 perjalanan | Lihat rute, pilih mobil & lama perjalanan | Tonton mobil berjalan sampai tiba |
+
 ---
 
 ## ✨ Fungsi Aplikasi
