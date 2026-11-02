@@ -13,6 +13,8 @@ data class RideSnapshot(
     val isStoppedAtLight: Boolean,
     /** True while the car is driving (not searching, picking up, at a red light or arrived). */
     val isMoving: Boolean,
+    /** Current speed relative to cruise speed: 0 when standing still, 1 when cruising. */
+    val speedRatio: Float,
     val millisToPickup: Long,
     val millisToArrival: Long,
     /** 0..1 progress of the trip part only (after pickup). */

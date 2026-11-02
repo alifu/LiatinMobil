@@ -118,6 +118,18 @@ class RideSimulatorTest {
     }
 
     @Test
+    fun `speed ratio ramps up from a stop, cruises, then ramps down`() {
+        val start = RideSimulator.SEARCHING_MILLIS
+        assertEquals(0f, simulator.snapshotAt(start - 1).speedRatio, EPS)
+        assertEquals(0.5f, simulator.snapshotAt(start + 1_500).speedRatio, 0.01f)
+        assertEquals(1f, simulator.snapshotAt(start + 5_000).speedRatio, EPS)
+        assertEquals(0.5f, simulator.snapshotAt(approachEnd - 1_500).speedRatio, 0.01f)
+        assertEquals(0f, simulator.snapshotAt(approachEnd + 1_000).speedRatio, EPS)
+        assertEquals(0f, simulator.snapshotAt(stopStart + STOP_MS / 2).speedRatio, EPS)
+        assertEquals(0f, simulator.snapshotAt(duration).speedRatio, EPS)
+    }
+
+    @Test
     fun `remaining time counts down to arrival`() {
         assertEquals(duration - 10_000, simulator.snapshotAt(10_000).millisToArrival)
     }

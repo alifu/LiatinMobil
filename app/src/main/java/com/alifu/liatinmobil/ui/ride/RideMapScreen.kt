@@ -80,7 +80,7 @@ fun RideMapScreen(
             topInsetPx = topBarHeightPx,
             bottomInsetPx = sheetHeightPx,
             searchingPulse = pulse,
-            carHop = carHopHeight(state.elapsedMillis, state.snapshot.isMoving),
+            carHop = carHopHeight(state.elapsedMillis, state.snapshot.speedRatio),
         )
         Row(
             Modifier
