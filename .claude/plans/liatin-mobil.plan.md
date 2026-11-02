@@ -2,7 +2,7 @@
 
 **Sumber**: permintaan langsung (mode percakapan)
 **Kompleksitas**: Medium
-**Status**: MENUNGGU KONFIRMASI
+**Status**: SELESAI (branch `feat/liatin-mobil-app`)
 
 ## Ringkasan
 Aplikasi Android (Kotlin + Jetpack Compose) untuk anak-anak yang meniru pengalaman "melihat mobil bergerak di peta" seperti aplikasi ride-hailing. Ada 3 halaman: Dashboard → Pilihan Mobil → Animasi Mobil di Peta. Semua data (10 rute dummy, peta, gambar mobil) dibundel di dalam APK, sehingga **tidak butuh internet sama sekali**. Animasi pelan, mulus, dan berdurasi ≥ 5 menit.
@@ -200,10 +200,18 @@ _Model: Haiku 5.5 (Task 9, 11), Sonnet 5.5 (Task 10)_
 - **Total: ±11–15 jam**
 
 ## Acceptance
-- [ ] 3 halaman berfungsi dan tersambung
-- [ ] 10 rute dummy berbeda bisa dipilih
-- [ ] Animasi mulus, mobil berbelok halus, durasi ≥ 5 menit (bisa dipilih)
-- [ ] Tema dominan hijau & putih
-- [ ] Berjalan normal dalam mode pesawat; tidak ada permission INTERNET
-- [ ] Unit test lulus, coverage domain/simulasi ≥ 80%
-- [ ] README menjelaskan fungsi app
+- [x] 3 halaman berfungsi dan tersambung
+- [x] 10 rute dummy berbeda bisa dipilih
+- [x] Animasi mulus, mobil berbelok halus, durasi ≥ 5 menit (bisa dipilih)
+- [x] Tema dominan hijau & putih
+- [x] Berjalan normal dalam mode pesawat; tidak ada permission INTERNET
+- [x] Unit test lulus, coverage domain/simulasi ≥ 80%
+- [x] README menjelaskan fungsi app
+
+## Catatan Implementasi (penyimpangan dari plan)
+- **Kunci orientasi portrait tidak dipakai**: di targetSdk 37, Android mengabaikannya di layar besar. Sebagai gantinya, posisi perjalanan disimpan di `SavedStateHandle` agar tetap berlanjut saat layar diputar.
+- **Gambar mobil** dibuat dengan Compose `Canvas` (`CarDrawing.kt`), bukan file vector `car_*.xml`. Gambar yang sama dipakai di peta dan di daftar mobil.
+- **Rute 10** menjadi "Rumah Teman → Toko Es Krim" agar bisa lewat jalan layang tanpa menabrak bundaran.
+- **`kotlinx-coroutines-test` tidak dipakai**: ViewModel menerima delta waktu per frame (`onFrame`), jadi bisa dites tanpa coroutine.
+- **Peringatan lint `PluralsCandidate` diabaikan**: bahasa Indonesia tidak membedakan bentuk tunggal dan jamak ("1 menit" / "5 menit").
+- **Semua fase dikerjakan dengan Opus 5.5 dalam satu sesi**, tidak memakai subagent per model seperti di tabel "Model per Fase".
