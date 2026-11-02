@@ -30,24 +30,31 @@ class RideSimulator(private val route: Route, durationMillis: Long) {
     fun snapshotAt(elapsedMillis: Long): RideSnapshot {
         val elapsed = elapsedMillis.coerceAtLeast(0)
         val step = steps.firstOrNull { elapsed < it.endMillis }
-            ?: return snapshot(path.length, RidePhase.ARRIVED, elapsed, isRedLight = false)
+            ?: return snapshot(path.length, RidePhase.ARRIVED, elapsed, isRedLight = false, isMoving = false)
         return when (step) {
-            is TimelineStep.Wait -> snapshot(step.atDistance, step.phase, elapsed, step.isRedLight)
+            is TimelineStep.Wait -> snapshot(step.atDistance, step.phase, elapsed, step.isRedLight, isMoving = false)
             is TimelineStep.Drive -> {
                 val fraction = easedDriveFraction(elapsed - step.startMillis, step.durationMillis, RAMP_MILLIS)
                 val distance = step.fromDistance + (step.toDistance - step.fromDistance) * fraction
-                snapshot(distance, step.phase, elapsed, isRedLight = false)
+                snapshot(distance, step.phase, elapsed, isRedLight = false, isMoving = true)
             }
         }
     }
 
-    private fun snapshot(distance: Float, phase: RidePhase, elapsed: Long, isRedLight: Boolean) =
+    private fun snapshot(
+        distance: Float,
+        phase: RidePhase,
+        elapsed: Long,
+        isRedLight: Boolean,
+        isMoving: Boolean,
+    ) =
         RideSnapshot(
             position = path.pointAt(distance),
             bearingDegrees = path.bearingAt(distance, TURN_RADIUS),
             phase = phase,
             travelledDistance = distance,
             isStoppedAtLight = isRedLight,
+            isMoving = isMoving,
             millisToPickup = (pickupReachedAtMillis - elapsed).coerceAtLeast(0),
             millisToArrival = (totalMillis - elapsed).coerceAtLeast(0),
             tripProgress = ((distance - pickupDistance) / tripLength).coerceIn(0f, 1f),

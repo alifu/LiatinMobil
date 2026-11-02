@@ -31,6 +31,7 @@ Urutan perjalanannya dibuat mirip aplikasi ride-hailing:
 
 Fitur lain di halaman peta:
 - Mobil **berbelok dengan halus** di tikungan dan bundaran, serta melambat atau mempercepat dengan lembut saat berhenti dan berangkat.
+- Saat berjalan, mobil **melompat-lompat kecil** dengan riang (bayangannya tetap di jalan). Saat berhenti, mobil diam.
 - Kamera **mengikuti mobil**. Tombol **🗺️ Lihat Rute** memperlihatkan seluruh rute.
 - Info driver pura-pura (nama, plat nomor, jenis mobil).
 - Tombol **⏸ Jeda / ▶ Lanjut**.
@@ -45,12 +46,12 @@ Peta adalah **kota fiktif** yang digambar langsung oleh aplikasi (Jetpack Compos
 
 | # | Rute | Ciri |
 |---|---|---|
-| 1 | 🏠 Rumah → 🏫 Sekolah | Pendek, beberapa belokan |
+| 1 | 🏠 Rumah → 🏫 Sekolah | Memutar lewat jalan raya, lalu ke sekolah |
 | 2 | 🏠 Rumah → 🎠 Taman Bermain | Memutari taman |
 | 3 | 🏫 Sekolah → 🦁 Kebun Binatang | Panjang, menyusuri sungai |
 | 4 | 🏠 Rumah → 👵 Rumah Nenek | Zig-zag di perumahan |
 | 5 | 🛍️ Mall → ✈️ Bandara | Jalan lurus panjang |
-| 6 | 🚉 Stasiun → 🏖️ Pantai | Melewati bundaran |
+| 6 | 🚉 Stasiun → 🏖️ Pantai | Melewati bundaran dan jalan layang |
 | 7 | 🏠 Rumah → 🏥 Rumah Sakit | Menyeberang jembatan |
 | 8 | 🧺 Pasar → 🕌 Masjid Raya | Banyak belokan pendek |
 | 9 | 📚 Perpustakaan → 🏊 Kolam Renang | Memutar blok |

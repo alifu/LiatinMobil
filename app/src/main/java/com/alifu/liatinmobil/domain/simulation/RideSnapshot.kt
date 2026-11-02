@@ -11,6 +11,8 @@ data class RideSnapshot(
     /** Distance along the full path (approach + trip). */
     val travelledDistance: Float,
     val isStoppedAtLight: Boolean,
+    /** True while the car is driving (not searching, picking up, at a red light or arrived). */
+    val isMoving: Boolean,
     val millisToPickup: Long,
     val millisToArrival: Long,
     /** 0..1 progress of the trip part only (after pickup). */

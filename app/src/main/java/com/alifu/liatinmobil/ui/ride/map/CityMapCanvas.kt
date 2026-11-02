@@ -59,6 +59,7 @@ private class RouteGeometry(route: Route) {
  * @param topInsetPx height covered by top controls, kept free in the overview.
  * @param bottomInsetPx height covered by the bottom sheet, kept free of map focus.
  * @param searchingPulse 0..1 animation value for the "looking for driver" radar.
+ * @param carHop 0..1 height of the car's playful hop while it drives.
  */
 @Composable
 fun CityMapCanvas(
@@ -71,6 +72,7 @@ fun CityMapCanvas(
     topInsetPx: Float = 0f,
     bottomInsetPx: Float = 0f,
     searchingPulse: Float = 0f,
+    carHop: Float = 0f,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val labels = remember(textMeasurer) {
@@ -100,7 +102,7 @@ fun CityMapCanvas(
         if (snapshot != null) {
             val carCenter = camera.toScreen(snapshot.position)
             if (snapshot.phase == RidePhase.SEARCHING_DRIVER) drawSearchingPulse(carCenter, searchingPulse)
-            drawTopDownCar(carCenter, snapshot.bearingDegrees, carColor, CAR_LENGTH.toPx())
+            drawTopDownCar(carCenter, snapshot.bearingDegrees, carColor, CAR_LENGTH.toPx(), carHop)
         }
     }
 }

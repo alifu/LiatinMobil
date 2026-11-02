@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.alifu.liatinmobil.data.CarCatalog
 import com.alifu.liatinmobil.data.LocalRouteRepository
 import com.alifu.liatinmobil.domain.model.RideDuration
+import com.alifu.liatinmobil.domain.model.RidePhase
 import com.alifu.liatinmobil.domain.simulation.RideSimulator
 import com.alifu.liatinmobil.ui.ride.RideMapScreen
 import com.alifu.liatinmobil.ui.ride.RideUiState
@@ -64,7 +65,10 @@ class RideMapScreenTest {
 
     @Test
     fun paused_ride_offers_resume() {
-        showRide { RideMapScreen(stateAt(60_000, isPaused = true), {}, {}, {}, {}) }
+        val driverComingAt = (0..duration step 1_000).first {
+            simulator.snapshotAt(it).phase == RidePhase.DRIVER_COMING
+        }
+        showRide { RideMapScreen(stateAt(driverComingAt, isPaused = true), {}, {}, {}, {}) }
 
         composeRule.onNodeWithText("▶ Lanjut").assertIsDisplayed()
         composeRule.onNodeWithText("Driver sedang menuju kamu").assertIsDisplayed()

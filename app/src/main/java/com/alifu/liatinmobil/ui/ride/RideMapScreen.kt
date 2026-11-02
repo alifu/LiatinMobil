@@ -42,6 +42,7 @@ import com.alifu.liatinmobil.ui.common.BackCircleButton
 import com.alifu.liatinmobil.ui.common.color
 import com.alifu.liatinmobil.ui.ride.map.CityMapCanvas
 import com.alifu.liatinmobil.ui.ride.map.RideBottomSheet
+import com.alifu.liatinmobil.ui.ride.map.carHopHeight
 
 private const val CAMERA_SWITCH_MILLIS = 900
 private const val PULSE_MILLIS = 1_600
@@ -79,6 +80,7 @@ fun RideMapScreen(
             topInsetPx = topBarHeightPx,
             bottomInsetPx = sheetHeightPx,
             searchingPulse = pulse,
+            carHop = carHopHeight(state.elapsedMillis, state.snapshot.isMoving),
         )
         Row(
             Modifier

@@ -99,6 +99,17 @@ class RideSimulatorTest {
     }
 
     @Test
+    fun `car is moving only while driving`() {
+        val midApproach = (RideSimulator.SEARCHING_MILLIS + approachEnd) / 2
+        assertTrue(simulator.snapshotAt(midApproach).isMoving)
+        assertTrue(simulator.snapshotAt(stopStart + STOP_MS + 10_000).isMoving)
+        assertFalse(simulator.snapshotAt(0).isMoving)
+        assertFalse(simulator.snapshotAt(approachEnd + 1_000).isMoving)
+        assertFalse(simulator.snapshotAt(stopStart + STOP_MS / 2).isMoving)
+        assertFalse(simulator.snapshotAt(duration).isMoving)
+    }
+
+    @Test
     fun `remaining time counts down to arrival`() {
         assertEquals(duration - 10_000, simulator.snapshotAt(10_000).millisToArrival)
     }

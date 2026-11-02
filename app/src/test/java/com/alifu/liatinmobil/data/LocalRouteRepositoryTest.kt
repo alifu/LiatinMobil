@@ -1,5 +1,6 @@
 package com.alifu.liatinmobil.data
 
+import com.alifu.liatinmobil.domain.geometry.Polyline
 import com.alifu.liatinmobil.domain.geometry.distance
 import com.alifu.liatinmobil.domain.model.MapPoint
 import org.junit.Assert.assertEquals
@@ -28,6 +29,14 @@ class LocalRouteRepositoryTest {
     fun `findRoute returns the route or null`() {
         assertEquals(3, LocalRouteRepository.findRoute(3)?.id)
         assertNull(LocalRouteRepository.findRoute(99))
+    }
+
+    @Test
+    fun `every route is long enough for a lively car speed`() {
+        routes.forEach { route ->
+            val length = Polyline(route.fullPath).length
+            assertTrue("route ${route.id} is only $length units", length >= MIN_FULL_PATH_LENGTH)
+        }
     }
 
     @Test
@@ -84,5 +93,10 @@ class LocalRouteRepositoryTest {
         val center = CityLayout.roundaboutCenter
         val radius = CityLayout.ROUNDABOUT_RADIUS
         return listOf(a, b).all { abs(distance(it, center) - radius) < 0.5f }
+    }
+
+    private companion object {
+        /** Doubled from the first release so the car drives twice as fast in the same time. */
+        const val MIN_FULL_PATH_LENGTH = 4_500f
     }
 }
