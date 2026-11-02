@@ -1,6 +1,7 @@
 package com.alifu.liatinmobil.domain.geometry
 
 import com.alifu.liatinmobil.domain.model.MapPoint
+import com.alifu.liatinmobil.domain.model.TurnDirection
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -69,6 +70,35 @@ class PolylineTest {
             listOf(MapPoint(50f, 0f), MapPoint(100f, 0f), MapPoint(100f, 50f)),
             slice,
         )
+    }
+
+    @Test
+    fun `corners report right turns with their distance`() {
+        // East then south on screen is a right turn.
+        assertEquals(listOf(Corner(100f, TurnDirection.RIGHT)), lShape.corners(minTurnDegrees = 60f))
+    }
+
+    @Test
+    fun `corners report left turns`() {
+        val leftTurn = Polyline(listOf(MapPoint(0f, 0f), MapPoint(100f, 0f), MapPoint(100f, -100f)))
+        assertEquals(listOf(Corner(100f, TurnDirection.LEFT)), leftTurn.corners(minTurnDegrees = 60f))
+    }
+
+    @Test
+    fun `corners list every sharp turn in order`() {
+        val zigzag = Polyline(
+            listOf(MapPoint(0f, 0f), MapPoint(100f, 0f), MapPoint(100f, 100f), MapPoint(200f, 100f)),
+        )
+        assertEquals(
+            listOf(Corner(100f, TurnDirection.RIGHT), Corner(200f, TurnDirection.LEFT)),
+            zigzag.corners(minTurnDegrees = 60f),
+        )
+    }
+
+    @Test
+    fun `gentle bends are not corners`() {
+        val bend = Polyline(listOf(MapPoint(0f, 0f), MapPoint(100f, 0f), MapPoint(200f, 20f)))
+        assertEquals(emptyList<Corner>(), bend.corners(minTurnDegrees = 60f))
     }
 
     @Test(expected = IllegalArgumentException::class)

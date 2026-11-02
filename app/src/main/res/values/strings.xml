@@ -40,4 +40,9 @@
     <string name="ride_pause">⏸ Jeda</string>
     <string name="ride_resume">▶ Lanjut</string>
     <string name="ride_play_again">Main Lagi</string>
+    <string name="ride_turn_left">Belok kiri</string>
+    <string name="ride_turn_right">Belok kanan</string>
+    <string name="ride_turn_distance">dalam %1$d m</string>
+    <string name="ride_mute">Matikan suara</string>
+    <string name="ride_unmute">Nyalakan suara</string>
 </resources>

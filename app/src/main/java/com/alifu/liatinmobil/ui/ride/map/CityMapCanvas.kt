@@ -1,10 +1,14 @@
 package com.alifu.liatinmobil.ui.ride.map
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -23,6 +27,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alifu.liatinmobil.data.Landmarks
@@ -43,6 +48,22 @@ private val MARKER_RADIUS = 9.dp
 private val OVERVIEW_PADDING = 40.dp
 private val PULSE_MAX_RADIUS = 70.dp
 
+private val CAR_TAP_RADIUS = 56.dp
+
+/** Everything that decides where the camera looks, so drawing and tap detection agree. */
+private data class CameraInputs(
+    val snapshot: RideSnapshot?,
+    val overviewBlend: Float,
+    val topInsetPx: Float,
+    val bottomInsetPx: Float,
+)
+
+private fun Density.cameraFor(size: Size, geometry: RouteGeometry, inputs: CameraInputs): MapCamera {
+    val overview = overviewCamera(geometry.path.points, size, inputs.topInsetPx, inputs.bottomInsetPx, OVERVIEW_PADDING.toPx())
+    val snapshot = inputs.snapshot ?: return overview
+    return lerpCamera(followCamera(snapshot.position, size, inputs.bottomInsetPx), overview, inputs.overviewBlend)
+}
+
 private class RouteGeometry(route: Route) {
     val path = Polyline(route.fullPath)
     val pickupDistance = Polyline(route.approachPath).length
@@ -59,7 +80,8 @@ private class RouteGeometry(route: Route) {
  * @param topInsetPx height covered by top controls, kept free in the overview.
  * @param bottomInsetPx height covered by the bottom sheet, kept free of map focus.
  * @param searchingPulse 0..1 animation value for the "looking for driver" radar.
- * @param carHop 0..1 height of the car's playful hop while it drives.
+ * @param carHop height of the car's playful hop: 0 = on the road, 1 = a normal hop, above 1 = a bigger jump.
+ * @param onCarTap called when the child taps the car (used for the horn).
  */
 @Composable
 fun CityMapCanvas(
@@ -73,6 +95,7 @@ fun CityMapCanvas(
     bottomInsetPx: Float = 0f,
     searchingPulse: Float = 0f,
     carHop: Float = 0f,
+    onCarTap: (() -> Unit)? = null,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val labels = remember(textMeasurer) {
@@ -81,13 +104,24 @@ fun CityMapCanvas(
     }
     val geometry = remember(route) { RouteGeometry(route) }
 
-    Canvas(modifier.clipToBounds().semantics { this.contentDescription = contentDescription }) {
-        val overview = overviewCamera(geometry.path.points, size, topInsetPx, bottomInsetPx, OVERVIEW_PADDING.toPx())
-        val camera = if (snapshot == null) {
-            overview
-        } else {
-            lerpCamera(followCamera(snapshot.position, size, bottomInsetPx), overview, overviewBlend)
-        }
+    val latestInputs by rememberUpdatedState(CameraInputs(snapshot, overviewBlend, topInsetPx, bottomInsetPx))
+    val latestOnCarTap by rememberUpdatedState(onCarTap)
+
+    Canvas(
+        modifier
+            .clipToBounds()
+            .semantics { this.contentDescription = contentDescription }
+            .pointerInput(geometry) {
+                detectTapGestures { tap ->
+                    val inputs = latestInputs
+                    val carPosition = inputs.snapshot?.position ?: return@detectTapGestures
+                    val camera = cameraFor(Size(size.width.toFloat(), size.height.toFloat()), geometry, inputs)
+                    val distanceToCar = (tap - camera.toScreen(carPosition)).getDistance()
+                    if (distanceToCar <= CAR_TAP_RADIUS.toPx()) latestOnCarTap?.invoke()
+                }
+            },
+    ) {
+        val camera = cameraFor(size, geometry, CameraInputs(snapshot, overviewBlend, topInsetPx, bottomInsetPx))
 
         drawRect(MapColors.background)
         withTransform({

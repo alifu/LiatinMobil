@@ -5,7 +5,7 @@ import com.alifu.liatinmobil.domain.model.Route
 import java.util.Locale
 
 /** One world unit is about two meters in the pretend city. */
-private const val METERS_PER_UNIT = 2f
+const val METERS_PER_UNIT = 2f
 private val IndonesianLocale: Locale = Locale.forLanguageTag("id-ID")
 
 /** Pretend trip distance, e.g. "4,2 km". */

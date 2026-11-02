@@ -41,6 +41,11 @@ Fitur lain di halaman peta:
 - Saat berjalan, mobil **melompat-lompat kecil** dengan riang (bayangannya tetap di jalan). Saat berhenti, mobil diam.
 - Kamera **mengikuti mobil**. Tombol **🗺️ Lihat Rute** memperlihatkan seluruh rute.
 - Info driver pura-pura (nama, plat nomor, jenis mobil).
+- 🔊 **Suara pemandu** (bahasa Indonesia, tersimpan di dalam app jadi tetap offline):
+  - "Belok kiri!" / "Belok kanan!" beberapa detik sebelum tikungan, bersamaan dengan **panah besar** ⬅️ ➡️ di layar lengkap dengan jaraknya.
+  - "Driver sudah sampai, ayo naik!", "Lampu merah, berhenti dulu ya", dan "Hore! Kita sudah sampai!".
+  - Tombol **🔊 / 🔇** untuk membisukan suara.
+- 🚗 **Ketuk mobil** untuk membunyikan klakson "tin tin", dan mobil melompat lebih tinggi sebentar.
 - Tombol **⏸ Jeda / ▶ Lanjut**.
 - **Layar tidak mati** selama perjalanan.
 - Perjalanan tetap berlanjut dari posisi yang sama saat layar diputar.
@@ -107,10 +112,13 @@ app/src/main/java/com/alifu/liatinmobil/
     └── theme/             # Warna hijau & putih
 ```
 
+Suara ada di `app/src/main/res/raw/` dan dibuat dengan `tools/generate_sounds.sh` (khusus macOS: memakai suara Indonesia bawaan "Damayanti" dan klakson yang disintesis). Jalankan skrip itu lagi kalau ingin mengganti kalimat atau kecepatan bicara.
+
 ### Cara kerja animasi (singkat)
 1. `RideSimulator` menyusun **timeline**: cari driver → jalan ke titik jemput → jemput → jalan (dengan lampu merah) → tiba. Total waktunya sama persis dengan durasi yang dipilih.
 2. Waktu jalan dibagi menurut **jarak**, jadi kecepatan mobil stabil. Setiap kali berangkat atau berhenti, kecepatannya naik-turun perlahan.
-3. Setiap frame layar, `RideViewModel` menambah waktu berjalan. Simulator lalu mengembalikan posisi dan arah mobil, dan `CityMapCanvas` menggambarnya.
+3. `RideSimulator` juga mencari tikungan tajam di rute. `soundCueFor` membandingkan dua frame berturut-turut dan memutuskan apa yang diucapkan (tiap isyarat hanya sekali).
+4. Setiap frame layar, `RideViewModel` menambah waktu berjalan. Simulator lalu mengembalikan posisi dan arah mobil, dan `CityMapCanvas` menggambarnya.
 
 ## ℹ️ Catatan
 Gaya visual (hijau & putih, mobil dilihat dari atas) **terinspirasi** aplikasi ride-hailing. Aplikasi ini **tidak memakai** logo, nama, atau aset milik merek mana pun. Semua nama driver, plat nomor, dan tempat adalah fiktif.
