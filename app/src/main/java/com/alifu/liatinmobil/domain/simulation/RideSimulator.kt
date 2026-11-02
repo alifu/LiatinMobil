@@ -95,8 +95,8 @@ class RideSimulator(private val route: Route, durationMillis: Long) {
     }
 
     companion object {
-        const val SEARCHING_MILLIS = 8_000L
-        const val PICKUP_MILLIS = 6_000L
+        const val SEARCHING_MILLIS = 3_000L
+        const val PICKUP_MILLIS = 3_000L
         private const val MIN_DRIVING_MILLIS = 30_000L
         private const val RAMP_MILLIS = 3_000L
         private const val TURN_RADIUS = 25f

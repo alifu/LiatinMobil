@@ -31,6 +31,14 @@ class RideSimulatorTest {
     private val stopStart = pickupEnd + drivingMs * 3 / 8
 
     @Test
+    fun `searching and pickup each wait three seconds`() {
+        assertEquals(3_000L, RideSimulator.SEARCHING_MILLIS)
+        assertEquals(3_000L, RideSimulator.PICKUP_MILLIS)
+        assertEquals(RidePhase.SEARCHING_DRIVER, simulator.snapshotAt(2_999).phase)
+        assertEquals(RidePhase.DRIVER_COMING, simulator.snapshotAt(3_000).phase)
+    }
+
+    @Test
     fun `total duration equals the chosen duration`() {
         assertEquals(duration, simulator.totalMillis)
     }

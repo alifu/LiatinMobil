@@ -40,6 +40,13 @@ class LocalRouteRepositoryTest {
     }
 
     @Test
+    fun `every red light waits three seconds`() {
+        routes.flatMap { it.trafficStops }.forEach { stop ->
+            assertEquals(WAIT_MILLIS, stop.waitMillis)
+        }
+    }
+
+    @Test
     fun `approach ends where the trip starts`() {
         routes.forEach { route ->
             assertEquals("route ${route.id}", route.approachPath.last(), route.tripPath.first())
@@ -98,5 +105,6 @@ class LocalRouteRepositoryTest {
     private companion object {
         /** Doubled from the first release so the car drives twice as fast in the same time. */
         const val MIN_FULL_PATH_LENGTH = 4_500f
+        const val WAIT_MILLIS = 3_000L
     }
 }

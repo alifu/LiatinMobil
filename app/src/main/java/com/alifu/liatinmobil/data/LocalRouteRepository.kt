@@ -12,7 +12,7 @@ import com.alifu.liatinmobil.domain.model.TrafficStop
  */
 object LocalRouteRepository : RouteRepository {
 
-    private const val RED_LIGHT_MILLIS = 6_000L
+    private const val RED_LIGHT_MILLIS = 3_000L
 
     private val routes: List<Route> = listOf(
         route(
