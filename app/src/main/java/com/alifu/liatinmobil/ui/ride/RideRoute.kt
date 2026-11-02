@@ -36,5 +36,6 @@ fun RideRoute(
         onTogglePause = viewModel::togglePause,
         onBack = onBack,
         onPlayAgain = onPlayAgain,
+        soundCues = viewModel.soundCues,
     )
 }

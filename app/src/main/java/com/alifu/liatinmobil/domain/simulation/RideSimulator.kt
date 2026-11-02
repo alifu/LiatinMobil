@@ -15,6 +15,7 @@ class RideSimulator(private val route: Route, durationMillis: Long) {
     private val path = Polyline(route.fullPath)
     private val pickupDistance = Polyline(route.approachPath).length
     private val tripLength = path.length - pickupDistance
+    private val corners = path.corners(MIN_TURN_DEGREES)
     private val steps: List<TimelineStep>
     private val pickupReachedAtMillis: Long
 
@@ -62,7 +63,18 @@ class RideSimulator(private val route: Route, durationMillis: Long) {
             millisToPickup = (pickupReachedAtMillis - elapsed).coerceAtLeast(0),
             millisToArrival = (totalMillis - elapsed).coerceAtLeast(0),
             tripProgress = ((distance - pickupDistance) / tripLength).coerceIn(0f, 1f),
+            upcomingTurn = upcomingTurn(distance, phase),
         )
+
+    /** The next corner ahead, but only while the car is on its way and the corner is close. */
+    private fun upcomingTurn(distance: Float, phase: RidePhase): UpcomingTurn? {
+        if (phase != RidePhase.DRIVER_COMING && phase != RidePhase.ON_TRIP) return null
+        val index = corners.indexOfFirst { it.distance > distance }
+        if (index < 0) return null
+        val distanceAhead = corners[index].distance - distance
+        if (distanceAhead > TURN_ANNOUNCE_DISTANCE) return null
+        return UpcomingTurn(index, corners[index].direction, distanceAhead)
+    }
 
     /** Driving time is shared by distance, so the car cruises at one steady speed. */
     private fun buildTimeline(drivingMillis: Long): List<TimelineStep> {
@@ -104,5 +116,11 @@ class RideSimulator(private val route: Route, durationMillis: Long) {
         private const val MIN_DRIVING_MILLIS = 30_000L
         private const val RAMP_MILLIS = 3_000L
         private const val TURN_RADIUS = 25f
+
+        /** Only turns sharper than this are announced; gentle bends are not. */
+        private const val MIN_TURN_DEGREES = 60f
+
+        /** How far before a corner the turn is announced (about 6 seconds of driving). */
+        const val TURN_ANNOUNCE_DISTANCE = 110f
     }
 }

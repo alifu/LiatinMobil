@@ -1,8 +1,13 @@
 package com.alifu.liatinmobil.domain.geometry
 
 import com.alifu.liatinmobil.domain.model.MapPoint
+import com.alifu.liatinmobil.domain.model.TurnDirection
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
+
+/** A sharp turn on a path: [distance] from the start, and which way the driver turns. */
+data class Corner(val distance: Float, val direction: TurnDirection)
 
 /**
  * An immutable path that can be sampled by travelled distance, so a car moving
@@ -60,6 +65,17 @@ class Polyline(rawPoints: List<MapPoint>) {
         }
     }
 
+    /** Every corner that turns by at least [minTurnDegrees]; gentle bends (e.g. a roundabout) are skipped. */
+    fun corners(minTurnDegrees: Float): List<Corner> =
+        (1 until points.size - 1).mapNotNull { i ->
+            val turn = shortestAngleDelta(bearings[i - 1], bearings[i])
+            when {
+                abs(turn) < minTurnDegrees -> null
+                turn > 0f -> Corner(cumulative[i], TurnDirection.RIGHT)
+                else -> Corner(cumulative[i], TurnDirection.LEFT)
+            }
+        }
+
     /** Points of the sub-path between [from] and [to] (inclusive, clamped). */
     fun slice(from: Float, to: Float): List<MapPoint> {
         val start = from.coerceIn(0f, length)
@@ -96,9 +112,10 @@ fun bearingDegrees(from: MapPoint, to: MapPoint): Float {
 }
 
 /** Interpolates between two headings along the shortest arc. */
-fun lerpAngle(from: Float, to: Float, t: Float): Float {
-    val delta = ((to - from) % 360f + 540f) % 360f - 180f
-    return normalizeDegrees(from + delta * t)
-}
+fun lerpAngle(from: Float, to: Float, t: Float): Float =
+    normalizeDegrees(from + shortestAngleDelta(from, to) * t)
+
+/** Signed turn from one heading to another in -180..180; positive turns right (clockwise). */
+fun shortestAngleDelta(from: Float, to: Float): Float = ((to - from) % 360f + 540f) % 360f - 180f
 
 private fun normalizeDegrees(degrees: Float): Float = ((degrees % 360f) + 360f) % 360f

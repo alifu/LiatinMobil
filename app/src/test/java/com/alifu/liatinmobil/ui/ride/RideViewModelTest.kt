@@ -5,6 +5,8 @@ import com.alifu.liatinmobil.data.CarCatalog
 import com.alifu.liatinmobil.data.LocalRouteRepository
 import com.alifu.liatinmobil.domain.model.RideDuration
 import com.alifu.liatinmobil.domain.model.RidePhase
+import com.alifu.liatinmobil.domain.simulation.RideSoundCue
+import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -51,6 +53,22 @@ class RideViewModelTest {
         repeat(50) { first.onFrame(100) }
         val restored = viewModel(handle)
         assertEquals(5_000L, restored.state.value.elapsedMillis)
+    }
+
+    @Test
+    fun `view model emits sound cues as the ride progresses`() {
+        val vm = viewModel()
+        val cues = mutableListOf<RideSoundCue>()
+        val job = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Unconfined).launch {
+            vm.soundCues.collect { cues += it }
+        }
+        repeat((duration / 100).toInt() + 10) { vm.onFrame(100) }
+        job.cancel()
+
+        assertTrue("turn cue missing: $cues", cues.any { it == RideSoundCue.TURN_LEFT || it == RideSoundCue.TURN_RIGHT })
+        assertTrue("pickup cue missing: $cues", RideSoundCue.DRIVER_ARRIVED in cues)
+        assertTrue("red light cue missing: $cues", RideSoundCue.RED_LIGHT in cues)
+        assertEquals(RideSoundCue.ARRIVED, cues.last())
     }
 
     @Test

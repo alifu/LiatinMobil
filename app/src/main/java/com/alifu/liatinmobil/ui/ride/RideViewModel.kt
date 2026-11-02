@@ -7,9 +7,15 @@ import com.alifu.liatinmobil.domain.model.CarType
 import com.alifu.liatinmobil.domain.model.RidePhase
 import com.alifu.liatinmobil.domain.model.Route
 import com.alifu.liatinmobil.domain.simulation.RideSimulator
+import com.alifu.liatinmobil.domain.simulation.RideSoundCue
+import com.alifu.liatinmobil.domain.simulation.soundCueFor
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
 /**
@@ -30,13 +36,20 @@ class RideViewModel(
     )
     val state: StateFlow<RideUiState> = _state.asStateFlow()
 
+    private val _soundCues = Channel<RideSoundCue>(capacity = SOUND_CUE_BUFFER, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
+    /** Things to say out loud (turns, pickup, red light, arrival), each emitted once. */
+    val soundCues: Flow<RideSoundCue> = _soundCues.receiveAsFlow()
+
     fun onFrame(deltaMillis: Long) {
         val current = _state.value
         if (current.isPaused || current.snapshot.phase == RidePhase.ARRIVED || deltaMillis <= 0) return
         val elapsed = (current.elapsedMillis + deltaMillis.coerceAtMost(MAX_FRAME_MILLIS))
             .coerceAtMost(simulator.totalMillis)
+        val snapshot = simulator.snapshotAt(elapsed)
         savedStateHandle[KEY_ELAPSED] = elapsed
-        _state.value = current.copy(elapsedMillis = elapsed, snapshot = simulator.snapshotAt(elapsed))
+        _state.value = current.copy(elapsedMillis = elapsed, snapshot = snapshot)
+        soundCueFor(current.snapshot, snapshot)?.let { _soundCues.trySend(it) }
     }
 
     fun togglePause() {
@@ -56,6 +69,7 @@ class RideViewModel(
     private companion object {
         const val KEY_ELAPSED = "ride_elapsed_millis"
         const val KEY_PAUSED = "ride_paused"
+        const val SOUND_CUE_BUFFER = 4
 
         /** A long frame (e.g. app returning from background) must not teleport the car. */
         const val MAX_FRAME_MILLIS = 100L
